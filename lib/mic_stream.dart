@@ -71,7 +71,7 @@ class MicStream {
   static int? __sampleRate;
   static ChannelConfig? __channelConfig;
   static AudioFormat? __audioFormat;
-  static int? __bafferSize;
+  static int? __bufferSize;
 
   /// This function manages the permission and ensures you're allowed to record audio
   static Future<bool> get permissionStatus async {
@@ -90,21 +90,21 @@ class MicStream {
   /// the returned stream is actually returning 16-bit data, and if so, manually cast uint8List.buffer.asUint16List()
   /// audioSource:     The device used to capture audio. The default let's the OS decide.
   /// sampleRate:      The amount of samples per second. More samples give better quality at the cost of higher data transmission
-  /// bafferSize:      The amount of data to be captured per sample. More data per sample means less overhead, but more latency
+  /// bufferSize:      The amount of data to be captured per sample. More data per sample means less overhead, but more latency
   /// channelConfig:   States whether audio is mono or stereo
   /// audioFormat:     Switch between 8- and 16-bit PCM streams
   ///
   static Future<Stream<Uint8List>?> microphone(
       {AudioSource? audioSource,
       int? sampleRate,
-      int? bafferSize,
+      int? bufferSize,
       ChannelConfig? channelConfig,
       AudioFormat? audioFormat}) async {
     audioSource ??= DEFAULT_AUDIO_SOURCE;
     sampleRate ??= DEFAULT_SAMPLE_RATE;
     channelConfig ??= DEFAULT_CHANNELS_CONFIG;
     audioFormat ??= DEFAULT_AUDIO_FORMAT;
-    bafferSize ??= DEFAULT_BUFFER_SIZE;
+    bufferSize ??= DEFAULT_BUFFER_SIZE;
 
     if (sampleRate < _MIN_SAMPLE_RATE || sampleRate > _MAX_SAMPLE_RATE)
       throw (RangeError.range(sampleRate, _MIN_SAMPLE_RATE, _MAX_SAMPLE_RATE));
@@ -116,20 +116,20 @@ class MicStream {
         sampleRate != __sampleRate ||
         channelConfig != __channelConfig ||
         audioFormat != __audioFormat ||
-        bufferSize != __bafferSize) {
+        bufferSize != __bufferSize) {
       //TODO: figure out whether the old stream needs to be cancelled
       _microphone = _microphoneEventChannel.receiveBroadcastStream([
         audioSource.index,
         sampleRate,
         channelConfig == ChannelConfig.CHANNEL_IN_MONO ? 16 : 12,
         audioFormat == AudioFormat.ENCODING_PCM_8BIT ? 3 : 2,
-        bafferSize
+        bufferSize
       ]).cast<Uint8List>();
       __audioSource = audioSource;
       __sampleRate = sampleRate;
       __channelConfig = channelConfig;
       __audioFormat = audioFormat;
-      __bafferSize = bafferSize;
+      __bufferSize = bufferSize;
     }
 
     // sampleRate/bitDepth should be populated before any attempt to consume the stream externally.
