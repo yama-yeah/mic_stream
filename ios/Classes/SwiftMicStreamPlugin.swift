@@ -59,6 +59,9 @@ public class SwiftMicStreamPlugin: NSObject, FlutterStreamHandler, FlutterPlugin
         // Set parameters, if available
         //print("this is config: \(config)")
         switch config.count {
+            case 5:
+                BUFFER_SIZE = config[4]!;
+                fallthrough
             case 4:
                 AUDIO_FORMAT = AudioFormat(rawValue:config[3]!)!;
                 if(AUDIO_FORMAT != AudioFormat.ENCODING_PCM_16BIT) {
