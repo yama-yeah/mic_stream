@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:permission_handler/permission_handler.dart' as handler;
 import 'package:flutter/services.dart';
-import 'dart:typed_data';
 
 // In reference to the implementation of the official sensors plugin
 // https://github.com/flutter/plugins/tree/master/packages/sensors
@@ -150,7 +149,7 @@ class MicStream {
   }
 
   /// Updates flag to determine whether to request audio recording permission. Set to false to disable dialogue, set to true (default) to request permission if necessary
-  static bool shouldRequestPermission(bool request_permission) {
-    return _requestPermission = request_permission;
+  static bool shouldRequestPermission(bool requestPermission) {
+    return _requestPermission = requestPermission;
   }
 }
